@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 // INCLUDE ERROR CLASS
-//const AppError = require('./utils/appError.js');
+const AppError = require('./utils/appError.js');
 
 // INCLUDE ERROR CONTROLLER
 //const errorController = require('./controllers/errorController.js');
@@ -50,14 +50,14 @@ app.use(userRoutes);
 app.use(movieRoutes);
 
 // UNHANDLED ROUTES
-// app.all('*', (req, res, next) => {
-//   errorController.sendError(
-//     new AppError(`Cannot find ${req.originalUrl} on the server`, 404),
-//     req,
-//     res,
-//     next
-//   );
-// });
+app.all('*', (req, res, next) => {
+  errorController.sendError(
+    new AppError(`Cannot find ${req.originalUrl} on the server`, 404),
+    req,
+    res,
+    next
+  );
+});
 
 // EXPORT APP
 module.exports = app;
