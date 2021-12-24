@@ -7,7 +7,7 @@ const cors = require('cors');
 const AppError = require('./utils/appError.js');
 
 // INCLUDE ERROR CONTROLLER
-//const errorController = require('./controllers/errorController.js');
+const errorController = require('./controllers/errorController.js');
 
 // INCLUDE ROUTES
 const userRoutes = require("./routers/userRouter");
@@ -43,7 +43,7 @@ app.use(cors(corsOptions));
 
 // ATTACH PARSERS
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // ATTACH ROUTES
 app.use(userRoutes);

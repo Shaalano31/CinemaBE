@@ -1,25 +1,17 @@
 const express = require("express");
-const router = express.Router();
-//const mongoose = require("mongoose");
-const Movie = require("../models/movieModel");
+const movieController = require('../controllers/movieController.js');
+const movieRouter = express.Router();
 
-router.get('/user', (req,res) => {
+var multer = require("multer");
+var storage = multer.memoryStorage()
+var upload = multer({ storage: storage })
 
-    const test = new Movie ({
-        title: "Spiderman",
-        room: 5
-    });
-    res.status(200);
-    test.save() //
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((err) => {
-      res.status(500).json({
-          error: err,
-          test: "Fail"
-      })
-    })
-  });
 
-module.exports = router;
+movieRouter.get('/movie/:id', movieController.getMovieDetails);
+
+movieRouter.post("/insertMovie", upload.single('img'), movieController.addMovie);
+
+
+
+
+module.exports = movieRouter;

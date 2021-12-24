@@ -10,20 +10,20 @@ const userSchema = new Schema( {
     username: {
         type: String,
         require: [true, "Please enter a username"],
-        unique: [true, 'Username name must be unique']
+        unique: [true, 'Username name must be unique'],
     },
     password: {
         type: String,
         require: [true, "Please enter a password"],
-        //validate: [validator.isStrongPassword, 'Weak password'],
+        validate: [validator.isStrongPassword, 'Weak password'],
     },
     firstName: {
         type: String,
-        require: true
+        require: [true, "Please enter a first name"],
     },
     lastName: {
         type: String,
-        require: true
+        require: [true, "Please enter a last name"],
     },
     email:{
         type: String,
@@ -33,7 +33,7 @@ const userSchema = new Schema( {
     },
     isManager: {
         type: Boolean,
-        require: true
+        require: [true, "Choose Manager or Customer"],
     }
 } );
 
@@ -46,10 +46,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // check if the password is correct
-userSchema.methods.correctPassword = async function (
-    candidatePassword,
-    userPassword
-  ) {
+userSchema.methods.correctPassword = async function ( candidatePassword, userPassword) {
     return await bcrypt.compareSync(candidatePassword, userPassword);
   };
 

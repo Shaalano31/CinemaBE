@@ -1,7 +1,5 @@
 // INCLUDE DEPENDENCIES
 const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
-const crypto = require('crypto');
 
 // INCLUDE MODELS
 const userModel = require("../models/userModel");
@@ -12,7 +10,7 @@ const errorController = require('./errorController.js');
 
 const createSignToken = (user, statusCode, res) => {
 
-    const token = jwt.sign({id: user._id}, 'my_secret_key');
+    const token = jwt.sign({id: user._id}, 'secret', {expiresIn: "1h"});
   
     res.status(statusCode).json({
       status: 'success',
