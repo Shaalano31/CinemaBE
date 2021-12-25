@@ -1,5 +1,6 @@
 const express = require("express");
 const movieController = require('../controllers/movieController.js');
+const authController = require('../controllers/authController.js');
 const movieRouter = express.Router();
 
 var multer = require("multer");
@@ -7,9 +8,26 @@ var storage = multer.memoryStorage()
 var upload = multer({ storage: storage })
 
 
-movieRouter.get('/movie/:id', movieController.getMovieDetails);
+movieRouter
+    .route("/movie/:id")
+    .get (
+    movieController.getMovieDetails
+    )
+    .patch (
+    upload.single('img'), 
+    authController.protect, 
+    authController.restrictTo('manager'),
+    movieController.updateMovie
+    )
 
-movieRouter.post("/insertMovie", upload.single('img'), movieController.addMovie);
+movieRouter
+    .route("/insertMovie")
+    .post(
+    upload.single('img'), 
+    authController.protect, 
+    authController.restrictTo('manager'),
+    movieController.addMovie
+    );
 
 
 

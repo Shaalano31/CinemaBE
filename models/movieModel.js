@@ -26,6 +26,12 @@ const movieSchema = new Schema( {
     endTime: {
         type: Date,
         require: true
+    },
+    capacity: {
+        type: Number
+    },
+    seats: {
+        type: Array
     }
 } );
 

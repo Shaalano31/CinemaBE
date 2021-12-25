@@ -31,9 +31,10 @@ const userSchema = new Schema( {
         unique: [true, 'Email name must be unique'],
         validate: [validator.isEmail, 'Invalid email address']
     },
-    isManager: {
-        type: Boolean,
-        require: [true, "Choose Manager or Customer"],
+    role: {
+        type: String,
+        require: [true, "Choose user or manager"],
+        enum: ['user', 'manager']
     }
 } );
 

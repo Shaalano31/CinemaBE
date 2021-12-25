@@ -1,7 +1,6 @@
-// INCLUDE DEPENDENCIES
 const jwt = require('jsonwebtoken');
+const {promisify} = require("util");
 
-// INCLUDE MODELS
 const userModel = require("../models/userModel");
 
 const AppError = require('../utils/appError.js');
@@ -10,7 +9,7 @@ const errorController = require('./errorController.js');
 
 const createSignToken = (user, statusCode, res) => {
 
-    const token = jwt.sign({id: user._id}, 'secret', {expiresIn: "1h"});
+    const token = jwt.sign({ id: user.id }, "secret", {  expiresIn: "1hr"});
   
     res.status(statusCode).json({
       status: 'success',
@@ -21,7 +20,7 @@ const createSignToken = (user, statusCode, res) => {
           firstName: JSON.parse(JSON.stringify(user.firstName)),
           lastName: JSON.parse(JSON.stringify(user.lastName)),
           username: JSON.parse(JSON.stringify(user.username)),
-          isManager: JSON.parse(JSON.stringify(user.isManager))
+          role: JSON.parse(JSON.stringify(user.role))
         },
       },
     });
@@ -74,3 +73,40 @@ exports.signUp = async(req,res) => {
         errorController.sendError(err, req, res);
       }
   }
+
+  exports.protect = async(req,res, next) => {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      token = req.headers.authorization.substring( 7,req.headers.authorization.length);
+    }
+
+    if (!token) {
+      throw new AppError( 'You are not logged in. Please log in to get access.', 401);
+    }
+
+    const decoded = await promisify(jwt.verify)(token, "secret");
+
+    const user = await userModel.findById(decoded.id);
+    if(!user) {
+      return next (
+        new AppError("User token no longer exists", 401)
+      );
+    }
+    
+    req.user = user;
+    next();
+  }
+
+
+  exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+      if(!roles.includes(req.user.role)) {
+        console.log(req.user.role);
+        return next(new AppError("No permission to perform this action", 403))
+      }
+      next();
+    };
+  };
