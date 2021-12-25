@@ -37,17 +37,3 @@ const movieSchema = new Schema( {
 
 const Movie = mongoose.model("Movie", movieSchema);
 module.exports = Movie;
-
-// var mongoose = require("mongoose");
-
-// var Schema = mongoose.Schema;
-
-// var ImageSchema = new Schema(
-//     {
-//         name: {type: String, required: true, max: 100},
-//         img: {data: Buffer, contentType: String},
-//         age: {type: Number}
-//     }
-// );
-
-// module.exports = mongoose.model("Image", ImageSchema);

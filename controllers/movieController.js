@@ -5,6 +5,7 @@ const errorController = require('./errorController.js');
 
 exports.addMovie = async(req, res) => {
     try {
+
       if(req.body.room == 1)
       {
         req.body.capacity = 20;
@@ -79,3 +80,28 @@ exports.updateMovie = async (req, res) => {
     errorController.sendError(err, req, res);
   }
 };
+
+exports.viewSeats = async (req, res) => {
+
+  try {
+
+    const movieDetails = await movieModel.findById(req.params.id)
+    .select({
+      seats: 1
+    });
+
+    if (!movieDetails) {
+      throw new AppError('No movie is found by that ID', 404);
+    }
+    
+    res.status(200).json({
+      status: 'success',
+      data: JSON.parse(JSON.stringify(movieDetails)),
+    });
+
+
+  } catch (err) {
+    errorController.sendError(err, req, res);
+  }
+
+}

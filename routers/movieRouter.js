@@ -30,6 +30,11 @@ movieRouter
     );
 
 
+movieRouter
+    .route("/movie/seats/:id")
+    .get(
+        movieController.viewSeats
+    )
 
 
 module.exports = movieRouter;
