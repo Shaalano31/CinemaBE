@@ -35,6 +35,23 @@ movieRouter
     .get(
         movieController.viewSeats
     )
-
+// movieRouter
+// .route("/reservemovie")
+// .post(
+//     authController.restrictTo('user'),
+//     movieController.reservemovie
+// )
+movieRouter
+.route("/Confirm/:id")
+.post(
+    authController.restrictTo('user'),
+    movieController.confirmReserevation
+)
+movieRouter
+.route("/Cancel/:id")
+.delete(
+    authController.restrictTo('user'),
+    movieController.cancelReserevation
+)
 
 module.exports = movieRouter;

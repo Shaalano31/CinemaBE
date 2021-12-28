@@ -12,8 +12,7 @@ const mongoose = require('mongoose');
 // CONFIGURE SERVER
 //dotenv.config({ path: './config.env' });
 const PORT = process.env.PORT || 3000;
-const DB =  "mongodb+srv://admin:admin@cluster0.5toq8.mongodb.net/Movies?retryWrites=true&w=majority";
-
+const DB =  "mongodb://Roaa:KFtZKzTmzKG3vKj@cluster0-shard-00-00.5toq8.mongodb.net:27017,cluster0-shard-00-01.5toq8.mongodb.net:27017,cluster0-shard-00-02.5toq8.mongodb.net:27017/Movies?ssl=true&replicaSet=atlas-1168da-shard-0&authSource=admin&retryWrites=true&w=majority";
 // INCLUDE APP
 const app = require('./app');
 
@@ -24,7 +23,7 @@ const server = app.listen(PORT, () => {
 
 // CONNECT TO DB
 mongoose
-  .connect(DB)
+  .connect(DB,{ useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('DB connection successful!'));
 
 // UNHANDLED REJECTIONS
