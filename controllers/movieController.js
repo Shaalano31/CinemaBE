@@ -1,8 +1,12 @@
 const movieModel = require("../models/movieModel");
-
+const ReserveModel = require("../models/reservemodel.js");
 const AppError = require('../utils/appError.js');
 const errorController = require('./errorController.js');
-
+var Ruser;
+var RTitle;
+var RTime;
+var Rdate;
+var Rseats; 
 exports.addMovie = async(req, res) => {
     try {
 
@@ -105,5 +109,75 @@ exports.viewSeats = async (req, res) => {
   } catch (err) {
     errorController.sendError(err, req, res);
   }
+
+}
+// exports.reservemovie= async(req,res)=>{
+//   try{
+//     Ruser=req.body.username;
+//     RTitle=req.body.MovieTitle;
+//     RTime=req.body.MovieTime;
+//     Rdate=req.body.date;
+//     Rseats=req.body.seats;
+//   }
+//   catch(err){
+//     errorController.sendError(err, req, res);
+//   }
+// }
+exports.confirmReserevation= async (req, res) =>{
+try{
+  const Reservation =await ReserveModel.create({
+    username: req.body.username,
+    MovieID: req.params.id,
+    seats: req.body.seats
+});
+
+const seats= req.body.seats;
+const movie = await movieModel.findById(req.params.id);
+  // res.status(200).json({
+  //   status: 'success',
+  //   data: JSON.parse(JSON.stringify(Reservation)),
+  // });
+for(let i=0;i<seats.length;i++){
+  movie.seats[seats[i]-1]=true;
+}
+const update=await movieModel.findByIdAndUpdate(req.params.id,
+  {
+    $set:{seats:movie.seats},
+  },
+  {
+          new: true,
+          runValidators: true,
+        }
+      );
+      res.status(200).json({
+        status: 'success',
+        data: 'Reservation sucessful',
+        //JSON.parse(JSON.stringify(update)),
+      });
+
+} catch (err) {
+  errorController.sendError(err, req, res);
+}
+}
+exports.cancelReserevation= async (req, res) =>{
+    try{const id=req.params.id;
+    const reservation=await ReserveModel.findById(id);
+    let date_obj=new Date();
+    const currentdate=date_obj.getDate();
+    const currenthour=date_obj.getHours();
+    if(currentdate<reservation.Date || (currentdate==reservation.Date && (reservation.MovieTime-currenthour)>=3)){
+
+        const Cancelation=await ReserveModel.findByIdAndDelete(id);
+        res.status(200).json({
+          status: 'success',
+          data: 'Cancelation sucessful',
+          //JSON.parse(JSON.stringify(Cancelation)),
+        });
+
+    }
+    }
+    catch(err){
+      errorController.sendError(err, req, res);
+    }
 
 }
