@@ -22,7 +22,6 @@ const whitelist = ['*'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (
-      process.env.NODE_ENV === 'development' ||
       whitelist.indexOf(origin) !== -1 ||
       !origin
     ) {
@@ -39,7 +38,7 @@ const corsOptions = {
 };
 
 // ATTACH CORS
-app.use(cors(corsOptions));
+app.use(cors());
 
 // ATTACH PARSERS
 app.use(bodyParser.json());

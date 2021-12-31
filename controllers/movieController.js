@@ -46,6 +46,8 @@ exports.getMovieDetails = async(req,res) => {
         if (!movieDetails) {
             throw new AppError('No movie is found by that ID', 404);
           }
+          res.header("Access-Control-Allow-Origin", "*");
+          res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
           res.status(200).json({
             status: 'success',
             data: JSON.parse(JSON.stringify(movieDetails)),

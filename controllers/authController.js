@@ -10,7 +10,6 @@ const errorController = require('./errorController.js');
 const createSignToken = (user, statusCode, res) => {
 
     const token = jwt.sign({ id: user.id }, "secret", {  expiresIn: "1hr"});
-  
     res.status(statusCode).json({
       status: 'success',
       token,
@@ -35,7 +34,7 @@ exports.signUp = async(req,res) => {
             lastName: req.body.lastName,
             email: req.body.email,
             password: req.body.password,
-            isManager: req.body.isManager
+            role: req.body.role
         });
 
         createSignToken(newUser, 201, res);
