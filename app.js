@@ -12,30 +12,31 @@ const errorController = require('./controllers/errorController.js');
 // INCLUDE ROUTES
 const userRoutes = require("./routers/userRouter");
 const movieRoutes = require("./routers/movieRouter");
+const reserveRoutes = require("./routers/reserveRouter");
 
 // CREATE EXPRESS APP
 const app = express();
 
-// CONFIGURE CORS POLICY
-const whitelist = ['*'];
+// // CONFIGURE CORS POLICY
+// const whitelist = ['*'];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (
-      whitelist.indexOf(origin) !== -1 ||
-      !origin
-    ) {
-      callback(null, true);
-    } else {
-      callback(new AppError('Cross-Origin Request Blocked', 401));
-    }
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: 'Content-Type,Authorization,X-Forwarded-For,xsrf-token',
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 200,
-};
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (
+//       whitelist.indexOf(origin) !== -1 ||
+//       !origin
+//     ) {
+//       callback(null, true);
+//     } else {
+//       callback(new AppError('Cross-Origin Request Blocked', 401));
+//     }
+//   },
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   allowedHeaders: 'Content-Type,Authorization,X-Forwarded-For,xsrf-token',
+//   credentials: true,
+//   preflightContinue: false,
+//   optionsSuccessStatus: 200,
+// };
 
 // ATTACH CORS
 app.use(cors());
@@ -47,6 +48,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // ATTACH ROUTES
 app.use(userRoutes);
 app.use(movieRoutes);
+app.use(reserveRoutes);
 
 // UNHANDLED ROUTES
 app.all('*', (req, res, next) => {

@@ -15,43 +15,22 @@ movieRouter
     )
     .patch (
     upload.single('img'), 
-    authController.protect, 
-    authController.restrictTo('manager'),
+    // authController.protect, 
+    // authController.restrictTo('manager'),
     movieController.updateMovie
     )
 
 movieRouter
-    .route("/insertMovie")
-    .post(
+    .route("/movie")
+    .post( //upload a movie
     upload.single('img'), 
-    authController.protect, 
-    authController.restrictTo('manager'),
+    // authController.protect, 
+    // authController.restrictTo('manager'),
     movieController.addMovie
-    );
-
-
-movieRouter
-    .route("/movie/seats/:id")
-    .get(
-        movieController.viewSeats
     )
-// movieRouter
-// .route("/reservemovie")
-// .post(
-//     authController.restrictTo('user'),
-//     movieController.reservemovie
-// )
-movieRouter
-.route("/Confirm/:id")
-.post(
-    authController.restrictTo('user'),
-    movieController.confirmReserevation
-)
-movieRouter
-.route("/Cancel/:id")
-.delete(
-    authController.restrictTo('user'),
-    movieController.cancelReserevation
-)
+    .get( //home screen movies
+    movieController.getAllMovies
+    )
+
 
 module.exports = movieRouter;

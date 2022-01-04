@@ -1,15 +1,25 @@
 const movieModel = require("../models/movieModel");
-const ReserveModel = require("../models/reservemodel.js");
+
 const AppError = require('../utils/appError.js');
 const errorController = require('./errorController.js');
-var Ruser;
-var RTitle;
-var RTime;
-var Rdate;
-var Rseats; 
+
+
 exports.addMovie = async(req, res) => {
     try {
+      
+      // // Check if room and starttime is free
+      // const movieDetails = await movieModel.find({room: req.body.room})
+      // .select({
+      //   startTime: 1,
+      // });
 
+      // for (const property in movieDetails) {
+      //   if(movieDetails[property].startTime.toISOString() === req.body.startTime) {
+      //     throw new AppError('Time slot has another movie already', 404);
+      //   }
+      // }
+
+      // Insert movie since time slot is free
       if(req.body.room == 1)
       {
         req.body.capacity = 20;
@@ -22,9 +32,9 @@ exports.addMovie = async(req, res) => {
         var movie = new movieModel({
             title: req.body.title,
             room: req.body.room,
-            date: req.body.date,
-            startTime: req.body.startTime,
-            endTime: req.body.endTime,
+            //date: req.body.date,
+            //startTime: req.body.startTime,
+            //endTime: req.body.endTime,
             capacity: req.body.capacity,
             seats: req.body.seats
         });
@@ -33,7 +43,7 @@ exports.addMovie = async(req, res) => {
         movie.save()
         .then((result) => {
           res.status(200).json({
-            status:1
+            status: "success"
           })
         });
     }
@@ -45,13 +55,16 @@ exports.addMovie = async(req, res) => {
 
 exports.getMovieDetails = async(req,res) => {
     try {
-        const movieDetails = await movieModel.findById(req.params.id);
+        const movieDetails = await movieModel.findById(req.params.id)
+        .select({
+          room: 1,
+          capacity: 1,
+          seats: 1
+        });
 
         if (!movieDetails) {
             throw new AppError('No movie is found by that ID', 404);
-          }
-          res.header("Access-Control-Allow-Origin", "*");
-          res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        }
           res.status(200).json({
             status: 'success',
             data: JSON.parse(JSON.stringify(movieDetails)),
@@ -61,6 +74,28 @@ exports.getMovieDetails = async(req,res) => {
     catch (err) {
         errorController.sendError(err, req, res);
     }
+};
+
+exports.getAllMovies = async(req,res) => {
+  try {
+      const movieDetails = await movieModel.find({})
+      .select({
+        title: 1,
+        date: 1,
+        startTime: 1,
+        endTime: 1,
+        room: 1,
+        // img: 1
+      });
+      res.status(200).json({
+          status: 'success',
+          data: JSON.parse(JSON.stringify(movieDetails)),
+      });
+
+  }
+  catch (err) {
+      errorController.sendError(err, req, res);
+  }
 };
 
 exports.updateMovie = async (req, res) => {
@@ -79,105 +114,9 @@ exports.updateMovie = async (req, res) => {
         }
       );
     res.status(200).json({
-      status: 'success',
-      data: JSON.parse(JSON.stringify(movieDetails)),
+      status: 'success'
     });
   } catch (err) {
     errorController.sendError(err, req, res);
   }
 };
-
-exports.viewSeats = async (req, res) => {
-
-  try {
-
-    const movieDetails = await movieModel.findById(req.params.id)
-    .select({
-      seats: 1
-    });
-
-    if (!movieDetails) {
-      throw new AppError('No movie is found by that ID', 404);
-    }
-    
-    res.status(200).json({
-      status: 'success',
-      data: JSON.parse(JSON.stringify(movieDetails)),
-    });
-
-
-  } catch (err) {
-    errorController.sendError(err, req, res);
-  }
-
-}
-// exports.reservemovie= async(req,res)=>{
-//   try{
-//     Ruser=req.body.username;
-//     RTitle=req.body.MovieTitle;
-//     RTime=req.body.MovieTime;
-//     Rdate=req.body.date;
-//     Rseats=req.body.seats;
-//   }
-//   catch(err){
-//     errorController.sendError(err, req, res);
-//   }
-// }
-exports.confirmReserevation= async (req, res) =>{
-try{
-  const Reservation =await ReserveModel.create({
-    username: req.body.username,
-    MovieID: req.params.id,
-    seats: req.body.seats
-});
-
-const seats= req.body.seats;
-const movie = await movieModel.findById(req.params.id);
-  // res.status(200).json({
-  //   status: 'success',
-  //   data: JSON.parse(JSON.stringify(Reservation)),
-  // });
-for(let i=0;i<seats.length;i++){
-  movie.seats[seats[i]-1]=true;
-}
-const update=await movieModel.findByIdAndUpdate(req.params.id,
-  {
-    $set:{seats:movie.seats},
-  },
-  {
-          new: true,
-          runValidators: true,
-        }
-      );
-      res.status(200).json({
-        status: 'success',
-        data: 'Reservation sucessful',
-        //JSON.parse(JSON.stringify(update)),
-      });
-
-} catch (err) {
-  errorController.sendError(err, req, res);
-}
-}
-exports.cancelReserevation= async (req, res) =>{
-    try{const id=req.params.id;
-    const reservation=await ReserveModel.findById(id);
-    let date_obj=new Date();
-    const currentdate=date_obj.getDate();
-    const currenthour=date_obj.getHours();
-    if(currentdate<reservation.Date || (currentdate==reservation.Date && (reservation.MovieTime-currenthour)>=3)){
-
-        const Cancelation=await ReserveModel.findByIdAndDelete(id);
-        res.status(200).json({
-          status: 'success',
-          data: 'Cancelation sucessful',
-          //JSON.parse(JSON.stringify(Cancelation)),
-        });
-
-    }
-    }
-    catch(err){
-      errorController.sendError(err, req, res);
-    }
-
-}

@@ -9,7 +9,7 @@ const errorController = require('./errorController.js');
 
 const createSignToken = (user, statusCode, res) => {
 
-    const token = jwt.sign({ id: user.id }, "secret", {  expiresIn: "1hr"});
+    const token = jwt.sign({ id: user.id }, "secret", {  expiresIn: "12hr"});
     res.status(statusCode).json({
       status: 'success',
       token,

@@ -7,10 +7,10 @@ const movieSchema = new Schema( {
         type: String,
         require: true
     },
-    date: {
-        type: Date,
-        require: true
-    },
+    // date: {
+    //     type: Date,
+    //     require: true
+    // },
     room: {
         type: Number,
         require: true
@@ -19,14 +19,14 @@ const movieSchema = new Schema( {
         data: Buffer, 
         contentType: String,
     },
-    startTime: {
-        type: Date,
-        require: true
-    },
-    endTime: {
-        type: Date,
-        require: true
-    },
+    // startTime: {
+    //     type: Date,
+    //     require: true
+    // },
+    // endTime: {
+    //     type: Date,
+    //     require: true
+    // },
     capacity: {
         type: Number
     },
