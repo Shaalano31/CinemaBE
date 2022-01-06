@@ -23,7 +23,7 @@ movieRouter
 movieRouter
     .route("/movie")
     .post( //upload a movie
-    upload.single('img'), 
+    //upload.single('img'), 
     // authController.protect, 
     // authController.restrictTo('manager'),
     movieController.addMovie

@@ -5,28 +5,28 @@ const movieSchema = new Schema( {
 
     title: {
         type: String,
-        require: true
+        require: [true, "Must enter a title"],
     },
-    // date: {
-    //     type: Date,
-    //     require: true
-    // },
+    date: {
+        type: Date,
+        require: [true, "Must specifiy a date"],
+    },
     room: {
         type: Number,
-        require: true
+        require: [true, "Must specifiy a room"],
     },
     img: { 
-        data: Buffer, 
-        contentType: String,
+        type: String, 
+        require: [true, "Please upload a poster"],
     },
-    // startTime: {
-    //     type: Date,
-    //     require: true
-    // },
-    // endTime: {
-    //     type: Date,
-    //     require: true
-    // },
+    startTime: {
+        type: Date,
+        require: [true, "Must specifiy a start time"],
+    },
+    endTime: {
+        type: Date,
+        require: [true, "Must specifiy an end time"],
+    },
     capacity: {
         type: Number
     },

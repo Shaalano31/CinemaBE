@@ -4,7 +4,7 @@ const userRouter = express.Router();
 
 
 userRouter.post('/sign-up', authController.signUp);
-userRouter.post('/sign-in', authController.signIn);
+userRouter.post('/sign-in', authController.logIn);
 
 
 

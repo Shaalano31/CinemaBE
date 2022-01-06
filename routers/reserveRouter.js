@@ -6,13 +6,13 @@ const authController = require('../controllers/authController.js');
 const reserveRouter = express.Router();
 
 reserveRouter
-.route("/reserve/:id")
-.post(
+.route("/reserve/:id") 
+.post( //movie id
     // authController.protect, 
     // authController.restrictTo('user'),
     reserveController.confirmReserevation
 )
-.get(
+.get( //user id
     // authController.protect, 
     // authController.restrictTo('user'),
     reserveController.getAllReservation
@@ -20,7 +20,7 @@ reserveRouter
 
 reserveRouter
 .route("/cancel/:id")
-.delete(
+.delete( //reserve id
     // authController.protect, 
     // authController.restrictTo('user'),
     reserveController.cancelReserevation

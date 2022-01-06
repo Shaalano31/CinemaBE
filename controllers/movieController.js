@@ -6,18 +6,23 @@ const errorController = require('./errorController.js');
 
 exports.addMovie = async(req, res) => {
     try {
-      
-      // // Check if room and starttime is free
-      // const movieDetails = await movieModel.find({room: req.body.room})
-      // .select({
-      //   startTime: 1,
-      // });
+      date = new Date(req.body.date)
+      startTime = new Date(req.body.date)
+      startTime.setHours(req.body.startTime.split(":")[0], 0, 0)
+      endTime = new Date(req.body.date)
+      endTime.setHours(req.body.endTime.split(":")[0], 0, 0)
 
-      // for (const property in movieDetails) {
-      //   if(movieDetails[property].startTime.toISOString() === req.body.startTime) {
-      //     throw new AppError('Time slot has another movie already', 404);
-      //   }
-      // }
+      // Check if room and starttime is free
+      const movieDetails = await movieModel.find({room: req.body.room})
+      .select({
+        startTime: 1,
+      });
+      
+      for (const property in movieDetails) {
+        if(movieDetails[property].startTime.toISOString() === startTime.toISOString()) {
+          throw new AppError('Time slot has another movie already', 404);
+        }
+      }
 
       // Insert movie since time slot is free
       if(req.body.room == 1)
@@ -29,23 +34,22 @@ exports.addMovie = async(req, res) => {
         req.body.capacity = 30;
         req.body.seats = new Array(30).fill(false);
       }
-        var movie = new movieModel({
-            title: req.body.title,
-            room: req.body.room,
-            //date: req.body.date,
-            //startTime: req.body.startTime,
-            //endTime: req.body.endTime,
-            capacity: req.body.capacity,
-            seats: req.body.seats
-        });
-        movie.img.data = req.file.buffer;
-        movie.img.contentType = "image/jpg";
-        movie.save()
-        .then((result) => {
-          res.status(200).json({
-            status: "success"
-          })
-        });
+      var movie = new movieModel({
+        title: req.body.title,
+        room: req.body.room,
+        date: date,
+        startTime: startTime,
+        endTime: endTime,
+        capacity: req.body.capacity,
+        seats: req.body.seats,
+        img: req.body.img
+      });
+      movie.save()
+      .then((result) => {
+        res.status(200).json({
+          status: "success"
+        })
+      });
     }
     catch(err) {
         errorController.sendError(err, req, res);
@@ -85,7 +89,7 @@ exports.getAllMovies = async(req,res) => {
         startTime: 1,
         endTime: 1,
         room: 1,
-        // img: 1
+        img: 1
       });
       res.status(200).json({
           status: 'success',
@@ -106,7 +110,8 @@ exports.updateMovie = async (req, res) => {
           room: req.body.room,
           date: req.body.date,
           startTime: req.body.startTime,
-          endTime: req.body.endTime
+          endTime: req.body.endTime,
+          img: req.body.img
         },
         {
           new: true,

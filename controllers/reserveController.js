@@ -31,8 +31,8 @@ try{
     );
 
     const Reservation =await reserveModel.create({
-      username: req.body.username,
-      MovieID: req.params.id,
+      userID: req.body.userID,
+      movieID: req.params.id,
       seats: req.body.seats
     });
 
@@ -51,12 +51,11 @@ exports.cancelReserevation= async (req, res) =>{
 
       const reservation=await reserveModel.findById(req.params.id);
 
-      const movie = await movieModel.findById(reservation.MovieID)
+      const movie = await movieModel.findById(reservation.movieID)
       .select({
         startTime: 1,
         seats: 1
       });
-
       let date_obj = new Date();
 
       timeRemaining = (movie.startTime - date_obj) / 36e5
@@ -69,7 +68,7 @@ exports.cancelReserevation= async (req, res) =>{
         movie.seats[reservation.seats[i]] = false;
       }
       
-      const update=await movieModel.findByIdAndUpdate(reservation.MovieID,
+      const update=await movieModel.findByIdAndUpdate(reservation.movieID,
         {
           $set:{seats:movie.seats},
         },
@@ -93,10 +92,43 @@ exports.cancelReserevation= async (req, res) =>{
 
 exports.getAllReservation = async (req, res) => {
   try{
-    const reservation=await reserveModel.find({
 
+    const reservation=await reserveModel.find({
+      userID: req.params.id
     });
 
+    if(!reservation) {
+      throw new AppError('You have no reservations made', 404);
+    }
+
+    data = {}
+    var key = 'reservations'
+    data[key] = []
+
+    for(let i=0;i<reservation.length;i++){       
+
+      const movie = await movieModel.findById(reservation[i].movieID)
+      .select({
+        startTime: 1,
+        title: 1
+      });
+      // console.log(movie)
+      // console.log(movie.startTime.getFullYear())
+      // console.log(movie.startTime.getMonth())
+      // console.log(movie.startTime.getDate())
+      var details = {
+        _id: reservation[i]._id,
+        seats: reservation[i].seats,
+        title: movie.title,
+      }
+      data[key].push(details)
+    }
+
+
+    res.status(200).json({
+      status: 'success',
+      data: JSON.parse(JSON.stringify(data)),
+  });
 
   }
   catch(err){

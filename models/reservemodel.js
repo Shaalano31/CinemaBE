@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 const ReserveSchema = new Schema( {
 
-    username: {
+    userID: {
         type: String,
         require: true
     },
-    MovieID: {
+    movieID: {
         type: String,
         require: true
     },
