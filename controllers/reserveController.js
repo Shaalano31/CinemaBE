@@ -7,10 +7,31 @@ const errorController = require('./errorController.js');
 exports.confirmReserevation= async (req, res) => {
 
 try{
-
+    var can=true;
     const movie = await movieModel.findById(req.params.id)
-    .select({seats: 1});
-
+    .select({seats: 1,
+      startTime:1,
+      date:1
+    });
+    const OtherReservation= await reserveModel.find(
+      {userID: req.params.id}
+    ).select({
+      movieID:1
+    });
+    if(OtherReservation.length!=0){
+      for(let i=0;i<OtherReservation.length;i++){
+        var reservetime = await movieModel.findById(OtherReservation[i])
+        .select({
+          startTime:1,
+          date:1
+        });
+        if(movie.date == reservetime.date && movie.startTime==reservetime.startTime){
+          can =false;
+          break;
+        }
+      }
+    }
+    if(can){
     for(let i=0;i<req.body.seats.length;i++){
       if(movie.seats[req.body.seats[i]] == true)
       {
@@ -35,12 +56,15 @@ try{
       movieID: req.params.id,
       seats: req.body.seats
     });
-
+  
     res.status(200).json({
       status: 'success',
       data: 'Reservation sucessful',
     });
-
+  }
+  else{
+    throw new AppError("User already reserved another movie at the same time", 404);
+  }
     } catch (err) {
     errorController.sendError(err, req, res);
     }
