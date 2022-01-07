@@ -1,5 +1,5 @@
 const movieModel = require("../models/movieModel");
-
+const reserveModel = require("../models/reserveModel.js");
 const AppError = require('../utils/appError.js');
 const errorController = require('./errorController.js');
 
@@ -12,6 +12,10 @@ exports.addMovie = async(req, res) => {
       endTime = new Date(req.body.date)
       endTime.setHours(req.body.endTime.split(":")[0], 0, 0)
 
+      currentTime = new Date()
+      if (startTime < currentTime) {
+        throw new AppError('Invalid choice of time, it already passed', 400);
+      }
       // Check if room and starttime is free
       const movieDetails = await movieModel.find({room: req.body.room})
       .select({
@@ -20,7 +24,7 @@ exports.addMovie = async(req, res) => {
       
       for (const property in movieDetails) {
         if(movieDetails[property].startTime.toISOString() === startTime.toISOString()) {
-          throw new AppError('Time slot has another movie already', 404);
+          throw new AppError('Time slot has another movie already', 401);
         }
       }
 
@@ -34,7 +38,8 @@ exports.addMovie = async(req, res) => {
         req.body.capacity = 30;
         req.body.seats = new Array(30).fill(false);
       }
-      var movie = new movieModel({
+
+      const movie = await movieModel.create({
         title: req.body.title,
         room: req.body.room,
         date: date,
@@ -44,12 +49,10 @@ exports.addMovie = async(req, res) => {
         seats: req.body.seats,
         img: req.body.img
       });
-      movie.save()
-      .then((result) => {
-        res.status(200).json({
-          status: "success"
-        })
-      });
+
+      res.status(200).json({
+        status: "success"
+      })
     }
     catch(err) {
         errorController.sendError(err, req, res);
@@ -125,3 +128,26 @@ exports.updateMovie = async (req, res) => {
     errorController.sendError(err, req, res);
   }
 };
+
+exports.deleteMovie = async (req, res) => {
+  try {
+
+    const reservation=await reserveModel.find({
+      movieID: req.params.id
+    });
+
+    for(let i=0;i<reservation.length;i++){       
+      const movie = await reserveModel.findByIdAndDelete(reservation[i]._id)
+    }
+
+    await movieModel.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      status: 'success',
+      data: 'Movie deleted sucessfully',
+    });
+
+  } catch (err) {
+    errorController.sendError(err, req, res);
+  }
+}

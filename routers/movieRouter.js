@@ -14,18 +14,23 @@ movieRouter
     movieController.getMovieDetails
     )
     .patch (
-    upload.single('img'), 
-    // authController.protect, 
-    // authController.restrictTo('manager'),
+    // upload.single('img'), 
+    authController.protect, 
+    authController.restrictTo('manager'),
     movieController.updateMovie
+    )
+    .delete(
+    authController.protect, 
+    authController.restrictTo('manager'),
+    movieController.deleteMovie
     )
 
 movieRouter
     .route("/movie")
     .post( //upload a movie
     //upload.single('img'), 
-    // authController.protect, 
-    // authController.restrictTo('manager'),
+    authController.protect, 
+    authController.restrictTo('manager'),
     movieController.addMovie
     )
     .get( //home screen movies

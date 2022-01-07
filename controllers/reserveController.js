@@ -61,7 +61,11 @@ exports.cancelReserevation= async (req, res) =>{
       timeRemaining = (movie.startTime - date_obj) / 36e5
 
       if(timeRemaining < 3) {
-        throw new AppError("Cannot cancel because movie is in less than 3 hours", 404);
+        // res.status(401).json({
+        //   status: 'failed',
+        //   data: 'Cannot cancel because movie is in less than 3 hours',
+        // });
+        throw new AppError("Cannot cancel because movie is in less than 3 hours", 401);
       }
 
       for(let i=0;i<reservation.seats.length;i++){       
@@ -96,7 +100,6 @@ exports.getAllReservation = async (req, res) => {
     const reservation=await reserveModel.find({
       userID: req.params.id
     });
-
     if(!reservation) {
       throw new AppError('You have no reservations made', 404);
     }

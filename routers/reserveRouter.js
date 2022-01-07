@@ -8,21 +8,21 @@ const reserveRouter = express.Router();
 reserveRouter
 .route("/reserve/:id") 
 .post( //movie id
-    // authController.protect, 
-    // authController.restrictTo('user'),
+    authController.protect, 
+    authController.restrictTo('user'),
     reserveController.confirmReserevation
 )
 .get( //user id
-    // authController.protect, 
-    // authController.restrictTo('user'),
+    authController.protect, 
+    authController.restrictTo('user'),
     reserveController.getAllReservation
 )
 
 reserveRouter
 .route("/cancel/:id")
 .delete( //reserve id
-    // authController.protect, 
-    // authController.restrictTo('user'),
+    authController.protect, 
+    authController.restrictTo('user'),
     reserveController.cancelReserevation
 )
 

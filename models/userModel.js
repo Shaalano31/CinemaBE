@@ -15,7 +15,7 @@ const userSchema = new Schema( {
     password: {
         type: String,
         require: [true, "Please enter a password"],
-        validate: [validator.isStrongPassword, 'Weak password'],
+        // validate: [validator.isStrongPassword, 'Weak password'],
     },
     firstName: {
         type: String,
